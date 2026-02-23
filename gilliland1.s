@@ -7,7 +7,7 @@
 @    15-Sep-2019 Added comments on which registers are changed
 @                when there is a call to printf or SVC.
 @    21-Jan-2026 Changed to match new ARM Assembly code template (ARMtemplate.s).
-@
+@    22-Feb-2026 Changed to complete ARM1 
 @ These commands assemble, link, run and debug the code.
 @ Student should change the following to match their code filename. 
 @
