@@ -89,8 +89,8 @@ get_input:
 char_prompt:
 @***********
 
-   ldr r0, =strCharPrompt
-   bl printf
+   ldr r0, =strCharPrompt  @ Load the string into r0
+   bl printf               @ Print whatevers at r0
 
 @****************
 get_char_input:
@@ -98,7 +98,7 @@ get_char_input:
 
    ldr r0, =charInputPattern
    ldr r1, =charInput
-   bl scanf               @ Can't get error code from %c so no there's need for it
+   bl scanf                   @ Can't get error code from %c so there's no need to check for one
 
 @ Load character
    ldr r1, =charInput
@@ -168,7 +168,7 @@ charInputPattern: .asciz " %c"   @ Ignores the CR from previous input
 strOutputChar: .asciz "The character value is: %c \n" 
 
 .balign 4
-charInput: .byte 0
+charInput: .byte 0 @ Location used to store character input
 
 @ Let the assembler know these are the C library functions. 
 
