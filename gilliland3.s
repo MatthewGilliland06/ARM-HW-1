@@ -83,19 +83,19 @@ getCharInput:
 @*******************
 checkLower:
 @*******************
-    cmp r1, #'a'
-    blt checkUpper
+    cmp r1, #'a'                
+    blt checkUpper              @ If r1 is <a, it's not lowercase
     
-    cmp r1, #'z'
+    cmp r1, #'z'                @ If r1 is >=a and <=z, its lowercase
     ble isLower
 
 @*******************
 checkUpper:
 @*******************
-    cmp r1, #'A'
-    blt special
+    cmp r1, #'A'                
+    blt special                 @ If r1 is <A, it's not a letter
 
-    cmp r1, #'Z'
+    cmp r1, #'Z'                @ If r1 is >=A and <=Z, its uppercase
     ble isUpper
 
 @*******************
