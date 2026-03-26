@@ -20,6 +20,8 @@
 @ layout reg
 @
 
+.equ READERROR, 0 @Used to check for scanf read error. 
+
 .text
 .global main
 
@@ -41,7 +43,7 @@ getNumInput:
     ldr r0, =numInputPattern    @ Get number
     ldr r1, =numInput
     bl scanf
-    cmp r0, #READERROR          @ Check for a read error.
+    cmp r0, #READERROR          @ Check for read error
     beq myExit
     
     ldr r1, =numInput           @ Load number
@@ -51,17 +53,16 @@ getNumInput:
 @*******************
 checkValidity:
 @*******************
-    cmp r1, #1               
+    cmp r1, #1                  @ Check numInput>=1    
     blt myExit 
 
-    cmp r1, #12
+    cmp r1, #12                 @ Check numInput<=12
     bgt myExit
 
 @*******************
 printText:
 @*******************
-    ldr r0, =enteredText   
-    mov r1, r1             
+    ldr r0, =enteredText        @ r1 already has the numInput inside needed to print             
     bl printf
 
     ldr r0, =tableText
@@ -70,9 +71,9 @@ printText:
     ldr r0, =tableHead
     bl printf
 
-    ldr r4, =loopNum
+    ldr r4, =loopNum       
     mov r5, #1
-    str r5, [r4]
+    str r5, [r4]        
 
     ldr r6, =total
     mov r7, #1
@@ -80,30 +81,30 @@ printText:
 @*******************
 factorial:
 @*******************
-    ldr r4, =loopNum    @ location of loopNum
-    ldr r5, [r4]        @ value of loopNum
+    ldr r4, =loopNum            @ location of loopNum
+    ldr r5, [r4]                @ value of loopNum
 
-    ldr r6, =total      @ location of total
-    ldr r7, [r6]        @ value of total
+    ldr r6, =total              @ location of total
+    ldr r7, [r6]                @ value of total
 
     mul r7, r5, r7
-    str r7, [r6]        @ store total in memory
+    str r7, [r6]                @ update total in memory
 
     ldr r0, =table
     mov r1, r5
     mov r2, r7
-    bl printf
+    bl printf                   @ print table line
 
-    add r5, r5, #1
-    str r5, [r4]
+    add r5, r5, #1              @ increment loopNum
+    str r5, [r4]                @ update loopNum in memory
 
-    ldr r1, =numInput
+    ldr r1, =numInput           @ load numInput for comparison
     ldr r1, [r1]
 
     cmp r5, r1
-    ble factorial
+    ble factorial               @ continue to loop if loopNum<=numInput
 @*******************
-myexit:
+myExit:
 @*******************
 @ Return to the OS
 POP {pc}
