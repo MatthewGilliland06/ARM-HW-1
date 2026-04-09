@@ -37,6 +37,26 @@ prompt1:
 @*******************
     ldr r0, =introPrompt
     bl printf
+ @*******************
+inventory:
+@*******************
+    ldr r0, =inventoryPrompt1
+    ldr r1, =regAmount
+    ldr r1, [r1]
+    ldr r2, =medAmount
+    ldr r2, [r2]
+    ldr r3, =preAmount
+    ldr r3, [r3]
+    bl printf
+
+    ldr r0, =inventoryPrompt2
+    ldr r1, =regDollar
+    ldr r1, [r1]
+    ldr r2, =medDollar
+    ldr r2, [r2]
+    ldr r3, =preDollar
+    ldr r3, [r3]
+    bl printf
 @*******************
 mainLoop:
 @*******************
@@ -58,26 +78,6 @@ mainLoop:
     b myExit
 
 continueLoop:
-@*******************
-inventory:
-@*******************
-    ldr r0, =inventoryPrompt1
-    ldr r1, =regAmount
-    ldr r1, [r1]
-    ldr r2, =medAmount
-    ldr r2, [r2]
-    ldr r3, =preAmount
-    ldr r3, [r3]
-    bl printf
-
-    ldr r0, =inventoryPrompt2
-    ldr r1, =regDollar
-    ldr r1, [r1]
-    ldr r2, =medDollar
-    ldr r2, [r2]
-    ldr r3, =preDollar
-    ldr r3, [r3]
-    bl printf
 @*******************
 selectionScreen:
 @*******************
