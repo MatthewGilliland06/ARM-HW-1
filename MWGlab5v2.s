@@ -63,7 +63,7 @@ mainLoop:
     ldr r0, =regAmount
     ldr r1, [r0]
     cmp r1, #10
-    bge continueLoop
+    bge continueLoop                    @ As long as one has enough gas to dispense, continue
 
     ldr r0, =medAmount
     ldr r1, [r0]
@@ -98,19 +98,20 @@ selectionScreen:
     beq medSelected
     cmp r1, #'P'
     beq preSelected
-    cmp r1, #'S'
+    cmp r1, #'S'                        @ Secret Input for inventory
     beq inventory
 
-    ldr r0, =invalidGradePrompt
+    ldr r0, =invalidGradePrompt         @ If r1 doesn't equal R,M,P, or S, it's invalid
     bl printf
-    b selectionScreen
+    b selectionScreen                   
 @*******************
 regSelected:
 @*******************
     ldr r5, =regAmount
     ldr r0, [r5]
-    cmp r0, #10
+    cmp r0, #10                         @ Check that theres enough gas to dispense
     bge regOK
+
     ldr r0, =emptyPrompt
     bl printf
     b selectionScreen
@@ -121,7 +122,7 @@ regOK:
     ldr r1, =regString
     bl printf
 
-    mov r4, #4
+    mov r4, #4                          @ Tenths of gallons per dollar
     ldr r6, =regDollar
     b getDollar
 @*******************
@@ -129,8 +130,9 @@ medSelected:
 @*******************
     ldr r5, =medAmount
     ldr r0, [r5]
-    cmp r0, #10
+    cmp r0, #10                         @ Check that theres enough gas to dispense
     bge medOK
+
     ldr r0, =emptyPrompt
     bl printf
     b selectionScreen
@@ -141,7 +143,7 @@ medOK:
     ldr r1, =medString
     bl printf
 
-    mov r4, #3
+    mov r4, #3                          @ Tenths of gallons per dollar
     ldr r6, =medDollar
     b getDollar
 @*******************
@@ -149,8 +151,9 @@ preSelected:
 @*******************
     ldr r5, =preAmount
     ldr r0, [r5]
-    cmp r0, #10
+    cmp r0, #10                         @ Check that theres enough gas to dispense
     bge preOK
+
     ldr r0, =emptyPrompt
     bl printf
     b selectionScreen
@@ -161,7 +164,7 @@ preOK:
     ldr r1, =preString
     bl printf
 
-    mov r4, #2
+    mov r4, #2                          @ Tenths of gallons per dollar              
     ldr r6, =preDollar
     b getDollar
 @*******************
@@ -174,41 +177,46 @@ getDollar:
     ldr r1, =userDollar
     bl scanf
 
-    cmp r0, #READERROR
+    cmp r0, #READERROR              @ Check for invalid input
     beq invalidDollar
 
-    ldr r7, =userDollar
+    ldr r7, =userDollar             @ Load dollar amount input
     ldr r7, [r7]
 
     cmp r7, #1
-    blt invalidDollar
+    blt invalidDollar               @ userDollar>=1
 
     cmp r7, #50
-    bgt invalidDollar
+    bgt invalidDollar               @ userDollar<=50
 
-    mul r8, r7, r4
+    mul r8, r7, r4                  @ Fuel to Dispense = Dollar Amount * Tenths of Gallons per dollar
 
-    ldr r9, [r5]
-    cmp r9, r8
+    ldr r9, [r5]                
+    cmp r9, r8                      @ Check that theres enough fuel to dispense  
     blt insufficient
 
     sub r9, r9, r8
     str r9, [r5]
 
     ldr r10, [r6]
-    add r10, r10, r7
+    add r10, r10, r7                @ Add dollars dispensed to the total dollars dispensed
     str r10, [r6]
 
     ldr r0, =dispensedPrompt
     mov r1, r8
     bl printf
 
-    b mainLoop
+    b mainLoop                      @ Loop back to mainLoop
 @*******************
 invalidDollar:
 @*******************
     ldr r0, =invalidDollarPrompt
     bl printf
+
+    ldr r0, =clearPattern           @ Clear invalid inputs
+    ldr r1, =clearBuffer
+    bl scanf
+
     b getDollar
 @*******************
 insufficient:
@@ -219,7 +227,7 @@ insufficient:
 @*******************
 myExit:
 @*******************
-    ldr r0, =inventoryPrompt1
+    ldr r0, =inventoryPrompt1               @ Dispenses inventory one last time
     ldr r1, =regAmount
     ldr r1, [r1]
     ldr r2, =medAmount
@@ -261,7 +269,7 @@ selectedPrompt: .asciz "You selected %s\n"
 invalidGradePrompt: .asciz "Invalid grade. Try again.\n"
 
 .balign 4
-emptyPrompt: .asciz "Insufficient inventory for that grade.\n"
+emptyPrompt: .asciz "Insufficient inventory for that grade.\n \n"
 
 .balign 4
 invalidDollarPrompt: .asciz "Invalid dollar amount. Enter 1-50.\n"
@@ -306,10 +314,17 @@ gradeChar: .byte 0
 dollarPrompt: .asciz "Enter Dollar amount (1-50):\n"
 
 .balign 4
-dispensedPrompt: .asciz "%d tenths of gallons have been dispensed.\n"
+dispensedPrompt: .asciz "%d tenths of gallons have been dispensed.\n \n"
 
 .balign 4
 intInputPattern: .asciz "%d"
 
 .balign 4
 userDollar: .word 0
+
+.balign 4
+clearPattern: .asciz "%[^\n]"
+
+.balign 4
+clearBuffer: .skip 100*4
+
